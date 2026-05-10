@@ -19,7 +19,7 @@ def get_home_data():
         print(f"文章数据：{articles}\n项目数据：{projects}")
         return jsonify({'articles': articles, 'projects': projects}), 200
     except Exception as e:
-        return jsonify(str(e)), 400
+        return jsonify({'message': e}), 500
 
 @data.route('/detail/<data_id>', methods=['GET'])
 def get_detail_data(data_id):
@@ -34,9 +34,9 @@ def get_detail_data(data_id):
         elif data_list[0] == 'project':
             project_id = int(data_list[1])
             project = Project.query.filter_by(id=project_id).first()
-            print(f"项目数据：{project.to_dict()                      }")
+            print(f"项目数据：{project.to_dict()}")
             return jsonify(project.to_dict()), 200
         else:
-            raise Exception('id错误，无法识别是是什么类型的详情页')
+            return jsonify({'message': 'id错误，无法识别是是什么类型的详情页'}), 400
     except Exception as e:
-        return jsonify(str(e)), 400
+        return jsonify({'message': e}), 500

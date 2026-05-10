@@ -1,0 +1,49 @@
+用户注册接口
+---
+tags:
+  - 用户注册模块
+summary: 实现注册用户功能
+description: 根据Post请求的JSON数据信息创建用户
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - username
+          - password
+        properties:
+          username:
+            type: string
+            example: "张三"
+          password:
+            type: string
+            example: "123456"
+          phone:
+            type: integer
+            example: 1234567890
+          email:
+            type: string
+            example: "123456@qq.com"
+responses:
+  200:
+    description: 注册成功
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "success"
+  500:
+    description: 服务器错误(内部代码报错)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "后端返回的具体错误信息"

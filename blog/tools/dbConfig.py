@@ -5,7 +5,7 @@ USERNAME = 'xiaoyu'
 PASSWORD = 'XiaoYu0729'
 HOST = 'localhost'
 PORT = 3306
-DATABASE = 'myblog'
+DATABASE = 'flaskblog'
 
 class ConfigDB:
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'

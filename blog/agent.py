@@ -15,7 +15,7 @@ def agent_info():
         else:
             sys_content = "你是一个基于提供的数据回答问题的助手。只根据给出的数据库内容进行回答。如果内容里没有相关信息，请直接说“不知道”或“未找到”。回答要准确、简洁。"
         content = get_agent_info(data['text'], sys_content)
-        return jsonify(content)
+        return jsonify(content), 200
     except Exception as e:
         str = f"服务器出现错误：{e}。请联系系统管理员。"
-        return jsonify(str)
+        return jsonify({'message': str}), 500
