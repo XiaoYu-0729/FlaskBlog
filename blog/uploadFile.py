@@ -2,8 +2,8 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
 from blog.tools.tool import allowed_file, image_path, get_project_file
-from blog.tools.module import Article, Project
-from blog.tools.connect import db
+from .tools import Article, Project,db
+from flask_jwt_extended import jwt_required
 import os
 import uuid
 
@@ -13,9 +13,11 @@ upload = Blueprint('upload', __name__, url_prefix='/upload')
     创建文章页面的封面上传来源：article
     创建项目页面的封面上传来源：project
     Markdown编辑器的图片上传来源：markdown
+    用户头像上传来源:avatar
 """
 # 图片下载到本地
 @upload.route('/image', methods=['POST'])
+@jwt_required()
 def upload_image():
     try:
         source = request.form['source']
@@ -30,20 +32,22 @@ def upload_image():
         image_data = original_image.read()
         with open(unique_path, 'wb') as f:
             f.write(image_data)
+        # 返回可直接被访问的图片URL
         url = f'/send/image/{source}/{unique_image}'
         print(f'图片上传成功，返回数据为：{url}')
         return jsonify(url), 200
     except Exception as e:
-        return jsonify(str(e)), 400
+        return jsonify({'message': e}), 500
 
 # 文件下载到本地
 @upload.route('/files', methods=['POST'])
+@jwt_required()
 def upload_files():
     files = request.files.getlist('files')
     path = 'D:\\BlogFiles\\files'
     try:
         if not allowed_file(files):
-            raise Exception('Invalid file')
+            return jsonify('文件格式错误'), 400
         results = []
         # 循环处理文件
         for file in files:
@@ -54,12 +58,13 @@ def upload_files():
             # 返回文件URL
             result = {'file_name': file.filename, 'uuid_name': unique_file}
             results.append(result)
+        return jsonify(results), 200
     except Exception as e:
-        return jsonify(str(e)), 400
-    return jsonify(results), 200
+        return jsonify({'message': str(e)}), 500
 
 # 文章上传数据库（待处理：Markdown长度格式验证）
 @upload.route('/article', methods=['POST'])
+@jwt_required()
 def upload_article():
     article_data = request.get_json()
     # 转换时间格式(前端传递的是 ISO 8601 格式：2026-04-01T14:14:20.442Z)
@@ -70,14 +75,15 @@ def upload_article():
         db.session.add(article)
         db.session.commit()
         print(f"文章提交成功。")
-        return 'success', 200
+        return jsonify({'message': 'success'}), 200
     except Exception as e:
         db.session.rollback()
         print(f"数据库操作失败：{e}")
-        return jsonify(str(e)), 400
+        return jsonify({'message': str(e)}), 500
 
-# 项目上传数据库（待处理：Markdown长度格式验证）
+# 项目上传数据库
 @upload.route('/project', methods=['POST'])
+@jwt_required()
 def upload_project():
     project_data = request.get_json()
     files = project_data.pop('files')
@@ -99,8 +105,8 @@ def upload_project():
         db.session.add_all(files)
         db.session.commit()
         print(f"项目提交成功")
-        return 'success', 200
+        return jsonify({'message': 'success'}), 200
     except Exception as e:
         db.session.rollback()
         print(f"数据库操作失败：{e}")
-        return  jsonify(str(e)), 400
+        return  jsonify({'message': str(e)}), 500

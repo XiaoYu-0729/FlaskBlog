@@ -1,6 +1,8 @@
 # encoding:utf-8
 from openai import OpenAI
 from blog.tools import ProjectFile
+import secrets
+import base64
 
 ALLOWED_FILE = [
         'zip', 'rar', 'doc', 'docx', 'ppt', 'pptx', 'pdf', 'txt', 'rtf', 'xls', 'xlsx',
@@ -13,11 +15,13 @@ API_KEY = 'sk-cp-Ng7Lqc87wwJkFagZIWbAYe5VqZZ3S65Bsn42tX0vSrRm8y9j-VCBl7qOs7P9DVq
 
 def image_path(source):
     if source == 'markdown':
-        return 'D:\\BlogFiles\\markdown'
+        return 'D:\\BlogFiles\\images\\markdown'
     elif source == 'article':
-        return 'D:\\BlogFiles\\article'
+        return 'D:\\BlogFiles\\images\\article'
     elif source == 'project':
-        return 'D:\\BlogFiles\\project'
+        return 'D:\\BlogFiles\\images\\project'
+    elif source == 'avatar':
+        return 'D:\\BlogFiles\\images\\avatar'
     else:
         raise Exception('Invalid source')
 
@@ -50,11 +54,27 @@ def get_home_dict(data):
             'id': item.id,
             'title': item.title,
             'intro': item.intro,
-            'createTime': item.createTime.strftime('%Y-%m-%d')
+            'createTime': item.createTime.strftime('%Y-%m-%d'),
+            'coverName': item.coverName
         }
         for item in data
     ]
     return result
+
+# base64转换前格式检查
+def check_base64(data):
+    i = len(data) % 4
+    if i:
+        data += '=' * (4 - i)
+    return data
+
+# 随机生成JWT密钥
+def get_jwt_secret_key():
+    # 随机生成32字节
+    random_bytes = check_base64(secrets.token_bytes(32))
+    # 将字节转换为 base64 编码
+    secret_key = base64.urlsafe_b64encode(random_bytes).decode('utf-8')
+    return secret_key
 
 # 获取智能体回复
 def get_agent_info(content, sys_content):
