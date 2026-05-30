@@ -1,10 +1,9 @@
 # encoding:utf-8
-from os import abort
 
 from flask import Blueprint,jsonify,request
 from werkzeug.security import generate_password_hash,check_password_hash
-from blog.tools.module import User
-from blog.tools.connect import db
+from .models import User
+from .config import db
 from datetime import datetime, timezone
 from flask_jwt_extended import create_access_token
 from flasgger import swag_from

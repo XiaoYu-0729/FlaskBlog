@@ -1,8 +1,9 @@
 # encoding:utf-8
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from blog.tools.tool import allowed_file, image_path, get_project_file
-from .tools import Article, Project,db
+from .tools import data_tool
+from .config import db
+from .models import Article, Project
 from flask_jwt_extended import jwt_required
 import os
 import uuid
@@ -26,7 +27,7 @@ def upload_image():
         # 路径处理
         image_type = os.path.splitext(image_name)[1]   # 获取图片扩展名
         unique_image = f'{uuid.uuid4().hex}{image_type}'   # 使用uuid生成唯一文件名
-        base_path = image_path(source)
+        base_path = data_tool.image_path(source)
         unique_path = os.path.join(base_path, unique_image)
         # 上传文件到本地
         image_data = original_image.read()
@@ -46,7 +47,7 @@ def upload_files():
     files = request.files.getlist('files')
     path = 'D:\\BlogFiles\\files'
     try:
-        if not allowed_file(files):
+        if not data_tool.allowed_file(files):
             return jsonify('文件格式错误'), 400
         results = []
         # 循环处理文件
@@ -99,7 +100,7 @@ def upload_project():
         project = Project(**project_data)
         db.session.add(project)
         db.session.flush()    # 获取自动生成项目ID，但不提交
-        files = get_project_file(files, project.id)
+        files = data_tool.get_project_file(files, project.id)
         print(f"项目id：{project}")
         # 录入项目文件表
         db.session.add_all(files)

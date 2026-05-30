@@ -1,7 +1,6 @@
 # encoding:utf-8
 from flask import Blueprint, send_from_directory, jsonify
-from .tools.tool import image_path
-from flask_jwt_extended import jwt_required
+from .tools import data_tool
 
 send = Blueprint('send', __name__, url_prefix='/send')
 
@@ -9,7 +8,7 @@ send = Blueprint('send', __name__, url_prefix='/send')
 @send.route('/image/<source>/<image_name>',methods=['GET'])
 def send_image(source, image_name):
     try:
-        path = image_path(source)
+        path = data_tool.image_path(source)
         return send_from_directory(path,image_name), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500

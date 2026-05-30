@@ -1,7 +1,8 @@
 # encoding:utf-8
 from flask import Blueprint,request,jsonify
 from flask_jwt_extended import jwt_required
-from .tools import db, User
+from .config import db
+from .models import User
 from werkzeug.security import check_password_hash,generate_password_hash
 
 update = Blueprint('update', __name__, url_prefix='/update')
