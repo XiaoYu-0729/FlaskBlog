@@ -35,3 +35,6 @@ class Project(BaseModel):
             return tech_stack_list
         else:
             return []
+
+    def to_home_dict(self):
+        return super().to_dict()

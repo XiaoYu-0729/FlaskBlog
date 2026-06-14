@@ -20,3 +20,6 @@ class Article(BaseModel):
             'category': self.category,
             'type': 'article'
         }
+
+    def to_home_dict(self):
+        return super().to_dict()

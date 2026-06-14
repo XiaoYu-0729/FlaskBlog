@@ -19,9 +19,6 @@ class User(db.Model):
     articleCount = db.Column(db.Integer, nullable=False, default=0)
     projectCount = db.Column(db.Integer, nullable=False, default=0)
     visitorCount = db.Column(db.Integer, nullable=False, default=0)
-    # commentCount = db.Column(db.Integer, nullable=False, default=0)
-    # likeCount = db.Column(db.Integer, nullable=False, default=0)
-    # collectCount = db.Column(db.Integer, nullable=False, default=0)
     # 权限
     status = db.Column(db.Integer, nullable=False, default=1)                  # 状态(0-禁用,1-正常)
     role = db.Column(db.String(20), nullable=False, default='user')
@@ -33,28 +30,21 @@ class User(db.Model):
     articles = db.relationship('Article', backref='user')
     projects = db.relationship('Project', backref='user')
     # 转换为字典
-    def to_dict_detail(self):
+    def to_dict_base_data(self):
         return {
             'id': self.id,
             'username': self.username,
             'nickname': self.nickname,
-            'password': self.password,
             'email': self.email if self.email else None,
             'phone': self.phone if self.phone else None,
             'avatar': self.avatar if self.avatar else None,
             'bio': self.bio if self.bio else None,
-            'createTime': self.createTime.strftime('%Y-%m-%d'),
-            'updateTime': self.updateTime.strftime('%Y-%m-%d'),
             'articleCount': self.articleCount,
             'projectCount': self.projectCount,
             'visitorCount': self.visitorCount,
             'status': self.status,
             'role': self.role,
-            'lastLoginTime': self.lastLoginTime.strftime('%Y-%m-%d') if self.lastLoginTime else None,
-            'lastLoginIp': self.lastLoginIp if self.lastLoginIp else None,
-            'theme': self.theme,
-            'articles': [article.to_dict() for article in self.articles],
-            'projects': [project.to_dict() for project in self.projects]
+            'theme': self.theme
         }
     def to_dict(self):
         return {

@@ -21,3 +21,15 @@ class BaseModel(db.Model):
         if len(content) > 100000:
             raise ValueError('Content is too long')
         return content
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'intro': self.intro,
+            'createTime': self.createTime.strftime('%Y-%m-%d'),
+            'coverName': self.coverName,
+            "draft": self.draft,
+            "view": self.view,
+            "like": self.like
+        }
