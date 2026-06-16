@@ -1,5 +1,5 @@
 from flask_migrate import Migrate
-from blog.tools import db
+from blog.config import db
 from blog import create_app
 
 """

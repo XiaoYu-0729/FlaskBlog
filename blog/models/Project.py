@@ -18,7 +18,6 @@ class Project(BaseModel):
             'title': self.title,
             'content': self.content,
             'coverName': self.coverName,
-            'view': self.view,
             'createTime': self.createTime.strftime('%Y-%m-%d'),
             'intro': self.intro,
             'techStack': self.tech_stack_to_list(),

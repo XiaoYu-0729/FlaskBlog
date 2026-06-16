@@ -9,4 +9,4 @@ class Collect(db.Model):
     target_id = db.Column(db.Integer, nullable=False)                               # 收藏的目标ID
     isUse = db.Column(db.Boolean, nullable=False, default=True)
     create_time = db.Column(db.DateTime, nullable=False)
-    user = db.relationship('User', backref='likes')
+    user = db.relationship('User', backref='collects')

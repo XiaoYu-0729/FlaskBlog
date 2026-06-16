@@ -1,6 +1,6 @@
 # encoding:utf-8
 from flask import Flask
-from . import uploadFile, agent,sendFile, dataTransfer, loginModel, updateData
+from . import uploadFile, agent,sendFile, dataTransfer, login, updateData
 from .config import db, ConfigDB, ConfigSwagger, JTWConfig
 from .tools import secret
 from flask_jwt_extended import JWTManager
@@ -27,7 +27,7 @@ def create_app():
     app.register_blueprint(agent.agent)
     app.register_blueprint(sendFile.send)
     app.register_blueprint(dataTransfer.data)
-    app.register_blueprint(loginModel.login)
+    app.register_blueprint(login.login)
     app.register_blueprint(updateData.update)
     # 若数据表不存在则创建数据表
     with app.app_context():

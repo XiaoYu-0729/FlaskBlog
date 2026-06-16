@@ -1,4 +1,4 @@
 # encoding:utf-8
-from blog.config.connect import db
+from .ServerException import ServerException
 
-__all__ = ['agent_response', 'result_dict', 'secret', 'data_tool']
+__all__ = ['agent_response', 'result_dict', 'secret', 'data_tool', 'ServerException']

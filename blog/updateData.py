@@ -1,9 +1,11 @@
 # encoding:utf-8
 from flask import Blueprint,request,jsonify
-from flask_jwt_extended import jwt_required, unset_jwt_cookies
+from flask_jwt_extended import jwt_required, unset_jwt_cookies, get_jwt_identity
 from .config import db
 from .models import User
 from werkzeug.security import check_password_hash,generate_password_hash
+from .tools import ServerException
+from .server import UpdateDataServer
 
 update = Blueprint('update', __name__, url_prefix='/update')
 
@@ -32,4 +34,30 @@ def update_user():
         return response, 200
     except Exception as e:
         db.session.rollback()
+        return jsonify({'message': str(e)}), 500
+
+# 点赞路由(路由已简化)
+@update.route('/<string:id>/like', methods=['POST'])
+@jwt_required()
+def like(id):
+    try:
+        username = get_jwt_identity()
+        UpdateDataServer.add_like(id, username)
+        return jsonify({'message': 'success'}), 200
+    except ServerException as e:
+        return jsonify({'message': str(e)}), e.status_code
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+# 取消点赞路由(路由已简化)
+@update.route('/<string:id>/like', methods=['DELETE'])
+@jwt_required()
+def cancel_like(id):
+    try:
+        username = get_jwt_identity()
+        UpdateDataServer.cancel_like(id, username)
+        return jsonify({'message': 'success'}), 200
+    except ServerException as e:
+        return jsonify({'message': str(e)}), e.status_code
+    except Exception as e:
         return jsonify({'message': str(e)}), 500

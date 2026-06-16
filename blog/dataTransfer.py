@@ -1,7 +1,9 @@
 # encoding:utf-8
 from flask import Blueprint, jsonify, request
-from .models import  Article, Project, User
+from .models import  Article, Project, User, Like
 from flask_jwt_extended import jwt_required,get_jwt_identity
+from .tools import ServerException
+from .server import DataTransferServer
 
 data = Blueprint('data', __name__, url_prefix='/data')
 
@@ -20,41 +22,16 @@ def get_home_data():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
-# 获取文章/项目详情数据
+# 获取文章/项目详情数据(路由已简化)
 @data.route('/detail/<data_id>', methods=['GET'])
+@jwt_required(optional=True)
 def get_detail_data(data_id):
-    data_list = data_id.strip().split('-')
-    print(f"数据列表：{data_list}")
     try:
-        # 文章详情
-        if data_list[0] == 'article':
-            article_id = int(data_list[1])
-            article = Article.query.filter_by(id=article_id, draft=False).first()
-            if article is None:
-                return jsonify({'message': '文章不存在'}), 404
-            user = article.user
-            print(f"文章数据：{article.to_dict()} 用户数据：{user.to_dict()}")
-            return jsonify({
-                'message': 'success',
-                'data': article.to_dict(),
-                'user': user.to_dict()
-            }), 200
-        # 项目详情
-        elif data_list[0] == 'project':
-            project_id = int(data_list[1])
-            project = Project.query.filter_by(id=project_id, draft=False).first()
-            if project is None:
-                return jsonify({'message': '项目不存在'}), 404
-            user = project.user
-            print(f"项目数据：{project.to_dict()} 用户数据：{user.to_dict()}")
-            return jsonify({
-                'message': 'success',
-                'data': project.to_dict(),
-                'user': user.to_dict()
-            }), 200
-        # 错误
-        else:
-            return jsonify({'message': 'id错误，无法识别是是什么类型的详情页'}), 400
+        username = get_jwt_identity()
+        response = DataTransferServer.transfer_detail_data(data_id, username)
+        return response, 200
+    except ServerException as e:
+        return jsonify({'message': str(e)}), e.status_code
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
@@ -66,7 +43,7 @@ def get_user_data():
         username = get_jwt_identity()
         user_info = User.query.filter_by(username=username).first()
         if user_info.status == 0:
-            return jsonify({'message': '该用户被禁用'}), 401
+            return jsonify({'message': '该用户被禁用'}), 403
         return jsonify({'message': 'success', 'userInfo': user_info.to_dict_base_data()}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500

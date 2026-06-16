@@ -14,11 +14,13 @@ class Article(BaseModel):
             'intro': self.intro,
             'content': self.content,
             'coverName': self.coverName,
-            'view': self.view,
             "draft": self.draft,
             'createTime': self.createTime.strftime('%Y-%m-%d'),
             'category': self.category,
-            'type': 'article'
+            'type': 'article',
+            'view_count': self.view_count,
+            'like_count': self.like_count,
+            'collect_count': self.collect_count,
         }
 
     def to_home_dict(self):
