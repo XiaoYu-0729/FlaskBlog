@@ -1,6 +1,6 @@
 # encoding:utf-8
-from openai import OpenAI
 from ..models import ProjectFile
+from . import ServerException
 
 ALLOWED_FILE = [
         'zip', 'rar', 'doc', 'docx', 'ppt', 'pptx', 'pdf', 'txt', 'rtf', 'xls', 'xlsx',
@@ -8,6 +8,12 @@ ALLOWED_FILE = [
         'h', 'hpp'
     ]
 
+"""
+    创建文章页面的封面上传来源：article
+    创建项目页面的封面上传来源：project
+    Markdown编辑器的图片上传来源：markdown
+    用户头像上传来源:avatar
+"""
 def image_path(source):
     if source == 'markdown':
         return 'D:\\BlogFiles\\images\\markdown'
@@ -18,19 +24,19 @@ def image_path(source):
     elif source == 'avatar':
         return 'D:\\BlogFiles\\images\\avatar'
     else:
-        raise Exception('Invalid source')
+        raise ServerException('不支持的来源', 404)
 
 # 判断文件名是否合法
 def allowed_file(files):
     # 判断文件是否存在
     if not files:
-        return False
+        raise ServerException('文件不存在', 404)
     # 判断文件名是否合法
     for file in files:
         filename = file.filename
         if not filename or '.' not in filename or filename.rsplit('.', 1)[1].lower() not in ALLOWED_FILE:
-            return False
-    return True
+            raise ServerException('文件格式错误', 400)
+    return
 
 # 批量获取项目文件对象
 def get_project_file(files_data, project_id):

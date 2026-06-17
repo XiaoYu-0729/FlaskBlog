@@ -1,6 +1,6 @@
 # encoding:utf-8
 from flask import Blueprint, send_from_directory, jsonify
-from .tools import data_tool
+from .tools import data_tool, ServerException
 
 send = Blueprint('send', __name__, url_prefix='/send')
 
@@ -9,6 +9,8 @@ send = Blueprint('send', __name__, url_prefix='/send')
 def send_image(source, image_name):
     try:
         path = data_tool.image_path(source)
-        return send_from_directory(path,image_name), 200
+        return send_from_directory(path, image_name), 200
+    except ServerException as e:
+        return jsonify({'message': str(e)}), e.status_code
     except Exception as e:
         return jsonify({'message': str(e)}), 500

@@ -16,7 +16,7 @@ class BaseModel(db.Model):
     collect_count = db.Column(db.Integer, nullable=False, default=0) # 收藏量
     draft = db.Column(db.Boolean, nullable=False, default=False) # 是否为草稿
     createTime = db.Column(db.DateTime, nullable=False)       # 创建时间
-
+    # 验证Markdown内容长度
     @validates('content')
     def validate_content(self, key, content):
         if len(content) > 100000:
