@@ -5,7 +5,7 @@ import datetime
 class JTWConfig():
     # 必须使用至少 32 字符的强密钥
     JWT_SECRET_KEY = 'flask-blog-super-secret-key-for-jwt-authentication-2026'
-    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=1)
+    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=5)
     JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(hours=1)
     JWT_TOKEN_LOCATION = ['cookies']
     JWT_COOKIE_SECURE = False

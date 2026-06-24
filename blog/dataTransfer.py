@@ -11,8 +11,8 @@ data = Blueprint('data', __name__, url_prefix='/data')
 @data.route('/home', methods=['GET'])
 def get_home_data():
     try:
-        result = DataTransferServer.get_home_data()
-        return result, 200
+        response = DataTransferServer.get_home_data()
+        return response, 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
@@ -22,7 +22,7 @@ def get_home_data():
 def get_detail_data(data_id):
     try:
         username = get_jwt_identity()
-        response = DataTransferServer.transfer_detail_data(data_id, username)
+        response = DataTransferServer.get_detail_data(data_id, username)
         return response, 200
     except ServerException as e:
         return jsonify({'message': str(e)}), e.status_code
@@ -49,8 +49,8 @@ def get_user_data():
 def get_my_items():
     try:
         data = request.get_json()
-        result = DataTransferServer.get_my_items(data)
-        return result, 200
+        response = DataTransferServer.get_my_items(data)
+        return response, 200
     except ServerException as e:
         return jsonify({'message': str(e)}), e.status_code
     except Exception as e:
